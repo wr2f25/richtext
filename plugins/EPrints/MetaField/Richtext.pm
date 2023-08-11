@@ -70,16 +70,27 @@ sub render_single_value
 {
 	my( $self, $session, $value, $obj ) = @_;
 
-        if( !defined $value ) { return $session->make_doc_fragment; }
+	if( !defined $value ) { return $session->make_doc_fragment; }
 
-        my $dom = XML::LibXML->load_html(
-              string => $value
-        );
+	my $body = eval
+	{
+		my $dom = XML::LibXML->load_html(
+			string => $value
+		);
 
-	my @nodelist = $dom->getElementsByTagName("body");
-	my $body = $nodelist[0];
+		my @nodelist = $dom->getElementsByTagName("body");
+		return $nodelist[0];
+	};
 
-        return $body;	
+	# If you have non-richtext encoded characters like & here, can cause LibXML to fail and a 500 error
+	# so catch this and just render plaintext
+	if( $@ )
+	{
+		print STDERR "Exception trying to render richtext for $value: $@\n";
+		return $session->make_text( $value );
+	}
+
+        return $body;
 }
 
 ######################################################################
