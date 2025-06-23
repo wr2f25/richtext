@@ -49,7 +49,6 @@ sub render_input_field_actual
 
 	my $frag = $self->SUPER::render_input_field_actual( @_[1..$#_] );
 
-	#$frag->appendChild( $session->make_element( "script", src => "//code.jquery.com/jquery-1.12.4.js" ) );
 	$frag->appendChild( $session->make_element( "script", src=> "/javascript/tinymce.min.js" ) );
 
 	if( $self->get_property( "multiple" ) )
@@ -60,7 +59,7 @@ sub render_input_field_actual
 	}
 	else
 	{
-		$frag->appendChild( $session->make_javascript( 'jQuery( document ).ready(function($){ initTinyMCE("#' . $basename .'"); } );' ) );
+		$frag->appendChild( $session->make_javascript( "document.addEventListener('DOMContentLoaded', (_) => { initTinyMCE('#$basename'); } );" ) );
 	}
 
 	return $frag;
