@@ -50,7 +50,17 @@ sub render_input_field_actual
 	my $frag = $self->SUPER::render_input_field_actual( @_[1..$#_] );
 
 	$frag->appendChild( $session->make_element( "script", src=> "/javascript/tinymce.min.js" ) );
-	$frag->appendChild( $session->make_javascript( "document.addEventListener('DOMContentLoaded', (_) => { initTinyMCE('#$basename'); } );" ) );
+
+	if( $self->get_property( "multiple" ) )
+	{
+		# This method will call initTinyMCE for each textarea rendered
+		# not in a document.ready as document.ready doesn't call in AJAX contexts
+		$frag->appendChild( $session->make_javascript( 'initMultipleTinyMCEs("' . $basename . '");' ) );
+	}
+	else
+	{
+		$frag->appendChild( $session->make_javascript( "document.addEventListener('DOMContentLoaded', (_) => { initTinyMCE('#$basename'); } );" ) );
+	}
 
 	return $frag;
 }
@@ -59,16 +69,27 @@ sub render_single_value
 {
 	my( $self, $session, $value, $obj ) = @_;
 
-        if( !defined $value ) { return $session->make_doc_fragment; }
+	if( !defined $value ) { return $session->make_doc_fragment; }
 
-        my $dom = XML::LibXML->load_html(
-              string => $value
-        );
+	my $body = eval
+	{
+		my $dom = XML::LibXML->load_html(
+			string => $value
+		);
 
-	my @nodelist = $dom->getElementsByTagName("body");
-	my $body = $nodelist[0];
+		my @nodelist = $dom->getElementsByTagName("body");
+		return $nodelist[0];
+	};
 
-        return $body;	
+	# If you have non-richtext encoded characters like & here, can cause LibXML to fail and a 500 error
+	# so catch this and just render plaintext
+	if( $@ )
+	{
+		print STDERR "Exception trying to render richtext for $value: $@\n";
+		return $session->make_text( $value );
+	}
+
+        return $body;
 }
 
 ######################################################################
