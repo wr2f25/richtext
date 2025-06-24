@@ -1,7 +1,6 @@
 The 'richtext' ingredient is designed to extend EPrints 3.4 by adding support for rich text based textareas.
 These rich text inputs are based on the use of the TinyMCE library which allows the graphical editing of HTML.
 The HTML values are submitted to EPrints and stored in the database in the same way as typical plain text values.
-jQuery is also required.
 
 Authors:
 Will Fyson, EPrints Services
