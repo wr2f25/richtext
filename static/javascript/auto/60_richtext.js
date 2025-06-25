@@ -6,6 +6,8 @@ var initTinyMCE = function(id){
 		height: 500,
 		width: 700,
 		menubar: false,
+		relative_url: false,
+		remove_script_host: false,
 		license_key: 'gpl', // This is licensed under GPLv2.1 as noted in README.md
 		toolbar: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
 		plugins: [
