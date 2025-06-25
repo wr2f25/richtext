@@ -7,6 +7,7 @@ var initTinyMCE = function(id){
 		width: 700,
 		menubar: false,
 		relative_url: false,
+		remove_script_host: false,
 		toolbar: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
 		plugins: [
 			'advlist autolink lists link image charmap print preview anchor',
